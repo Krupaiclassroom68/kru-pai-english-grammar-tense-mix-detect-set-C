@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Ultimate Tense Assault • Set 3 (Hardcore)</title>
+<style>
+  :root{
+    --bg0:#ffffff;
+    --bg1:#f8fafc;
+    --bg2:#eef2f7;
+
+    --lemon:#EFFF00;
+    --lemon2:#FFF6A6;
+
+    --red:#ff2d55;      /* red accent */
+    --red2:#ff6b86;
+
+    --ink:#0b0f16;
+    --ok:#22c55e;
+    --bad:#ff2d55;
+
+    --card: rgba(255,255,255,.90);
+    --border: rgba(0,0,0,.10);
+    --shadow: 0 18px 55px rgba(0,0,0,.12);
+    --radius: 20px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    color:var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+    background:
+      radial-gradient(1200px 650px at 50% -10%, rgba(239,255,0,.30), transparent 60%),
+      radial-gradient(900px 650px at 15% 25%, rgba(255,45,85,.10), transparent 62%),
+      radial-gradient(900px 650px at 85% 30%, rgba(239,255,0,.16), transparent 66%),
+      linear-gradient(180deg, var(--bg0), var(--bg1) 46%, var(--bg2));
+    overflow:hidden;
+  }
+
+  /* TV MODE */
+  body.tv-mode{
+    --shadow: 0 22px 90px rgba(0,0,0,.16);
+  }
+  body.tv-mode .titleLine{font-size:18px}
+  body.tv-mode .chip{padding:12px 14px; font-size:16px}
+  body.tv-mode .qText{font-size: clamp(34px, 4.2vw, 70px)}
+  body.tv-mode .opt{font-size: clamp(26px, 2.8vw, 46px); padding:20px 16px}
+  body.tv-mode .btn{font-size:18px; padding:16px 18px}
+  body.tv-mode .panel{border-radius: 26px}
+  body.tv-mode .heroTitle{font-size: clamp(30px, 3.6vw, 54px)}
+  body.tv-mode .heroSub{font-size: 16px}
+
+  .wrap{height:100%; display:flex; flex-direction:column;}
+
+  /* compact header */
+  .top{
+    padding:10px 12px 8px;
+    display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+  }
+  .brand{display:flex; gap:10px; align-items:center; min-width:240px;}
+  .logo{
+    width:38px; height:38px; border-radius:14px;
+    background:
+      radial-gradient(circle at 30% 25%, rgba(255,255,255,.35), transparent 55%),
+      linear-gradient(135deg, rgba(239,255,0,.38), rgba(255,45,85,.10)),
+      rgba(255,255,255,.08);
+    border:1px solid rgba(0,0,0,.12);
+    box-shadow: 0 14px 36px rgba(0,0,0,.16);
+    flex:0 0 auto;
+  }
+  .titleBlock{display:flex; flex-direction:column; gap:2px}
+  .titleLine{
+    font-weight:1200;
+    letter-spacing:.06em;
+    font-size:14px;
+    line-height:1.1;
+    white-space:nowrap;
+  }
+  .subLine{
+    font-weight:1100;
+    letter-spacing:.05em;
+    font-size:11px;
+    opacity:.78;
+  }
+
+  .hud{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
+  .chip{
+    background: rgba(255,255,255,.72);
+    border:1px solid rgba(0,0,0,.10);
+    border-radius:16px;
+    padding:8px 10px;
+    box-shadow: 0 12px 34px rgba(0,0,0,.10);
+    font-weight:1200;
+    font-size:13px;
+    display:flex; gap:8px; align-items:center;
+  }
+  .dot{width:8px;height:8px;border-radius:99px;background: var(--lemon); box-shadow:0 0 14px rgba(239,255,0,.55);}
+  .dot.red{background: var(--red); box-shadow:0 0 14px rgba(255,45,85,.45);}
+
+  .main{flex:1; display:grid; place-items:center; padding:10px 12px 16px;}
+  .panel{
+    width:min(980px, 100%);
+    border-radius: var(--radius);
+    border:1px solid var(--border);
+    background:
+      radial-gradient(900px 280px at 50% 0%, rgba(239,255,0,.12), transparent 55%),
+      radial-gradient(900px 280px at 50% 110%, rgba(255,45,85,.08), transparent 60%),
+      linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .inner{
+    padding:12px;
+    display:grid; gap:10px;
+    max-height: calc(100svh - 86px);
+    overflow:auto;
+  }
+
+  .hero{
+    border-radius:16px;
+    border:1px solid rgba(0,0,0,.08);
+    background: var(--card);
+    padding:10px 12px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:-2px;
+    background: linear-gradient(90deg, rgba(239,255,0,.0), rgba(239,255,0,.24), rgba(255,45,85,.18), rgba(239,255,0,.0));
+    transform: skewX(-18deg) translateX(-40%);
+    opacity:.55;
+    animation: sweep 5.5s linear infinite;
+  }
+  @keyframes sweep{
+    0%{transform: skewX(-18deg) translateX(-60%);}
+    100%{transform: skewX(-18deg) translateX(60%);}
+  }
+  .heroTitle{
+    position:relative;
+    font-weight:1300;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    font-size: clamp(18px, 3.2vw, 34px);
+    line-height:1.15;
+  }
+  .heroSub{
+    position:relative;
+    margin-top:6px;
+    font-weight:1100;
+    letter-spacing:.06em;
+    opacity:.90;
+    font-size: 12px;
+  }
+  .heroSub b{color: var(--red);}
+
+  .screen{display:none}
+  .screen.active{display:block}
+
+  .grid2{display:grid; gap:10px; grid-template-columns:1fr;}
+  @media(min-width: 920px){ .grid2{grid-template-columns: 1.1fr .9fr;} }
+
+  .box{
+    border-radius:16px;
+    border:1px solid rgba(0,0,0,.10);
+    background: var(--card);
+    padding:12px;
+  }
+  .box h3{
+    margin:0 0 8px;
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    font-weight:1200;
+    opacity:.88;
+  }
+
+  .how{display:grid; gap:8px; font-weight:1100; opacity:.92; font-size:13px;}
+  .pill{
+    display:flex; gap:10px; align-items:flex-start;
+    padding:10px; border-radius:14px;
+    background: rgba(255,255,255,.92);
+    border:1px solid rgba(239,255,0,.22);
+  }
+  .pill i{
+    width:26px;height:26px;border-radius:12px;
+    display:grid;place-items:center;
+    background: rgba(255,45,85,.10);
+    border:1px solid rgba(255,45,85,.22);
+    flex:0 0 auto;
+    font-style:normal;
+    font-weight:1300;
+    color: var(--red);
+  }
+
+  label{font-weight:1200; letter-spacing:.08em; font-size:11px; opacity:.78;}
+  input{
+    width:100%;
+    border-radius:14px;
+    border:1px solid rgba(0,0,0,.14);
+    background: rgba(255,255,255,.95);
+    padding:12px;
+    font-size:18px;
+    font-weight:1200;
+    outline:none;
+  }
+  input:focus{border-color: rgba(255,45,85,.65); box-shadow:0 0 0 4px rgba(255,45,85,.14);}
+
+  .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+
+  .btn{
+    border:0;
+    border-radius:14px;
+    padding:13px 14px;
+    font-size:15px;
+    font-weight:1300;
+    letter-spacing:.04em;
+    cursor:pointer;
+    background: linear-gradient(180deg, var(--lemon2), var(--lemon));
+    color:#101010;
+    box-shadow: 0 16px 44px rgba(239,255,0,.18);
+    transition: transform .08s ease, filter .2s ease;
+  }
+  .btn:hover{transform: translateY(-1px); filter:saturate(1.1);}
+  .btn:active{transform: translateY(1px);}
+  .btn.secondary{
+    background: rgba(255,255,255,.90);
+    border:1px solid rgba(0,0,0,.12);
+    box-shadow: 0 16px 44px rgba(0,0,0,.08);
+  }
+  .btn.danger{
+    background: linear-gradient(180deg, rgba(255,107,134,.55), rgba(255,45,85,.95));
+    color:white;
+    box-shadow: 0 18px 60px rgba(255,45,85,.18);
+  }
+
+  /* Game */
+  .arena{display:grid; gap:10px;}
+  .qBox{
+    border-radius:16px;
+    border:1px solid rgba(0,0,0,.10);
+    background: rgba(255,255,255,.92);
+    padding:12px;
+  }
+  .qMeta{
+    display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;
+    margin-bottom:8px;
+  }
+  .qNo{font-weight:1200; letter-spacing:.10em; opacity:.85; font-size:12px;}
+  .qType{
+    font-weight:1200; letter-spacing:.08em; font-size:11px; opacity:.82;
+    color: rgba(255,45,85,.92);
+  }
+
+  .qText{
+    text-align:center;
+    font-weight:1350;
+    font-size: clamp(22px, 3.6vw, 44px);
+    line-height:1.15;
+  }
+
+  .optGrid{display:grid; grid-template-columns:1fr; gap:10px;}
+  @media(min-width: 760px){ .optGrid{grid-template-columns: repeat(2, 1fr);} }
+
+  .opt{
+    border-radius:16px;
+    border:2px solid rgba(239,255,0,.35);
+    background: rgba(255,255,255,.95);
+    padding:14px 12px;
+    font-weight:1350;
+    font-size: clamp(18px, 2.6vw, 32px);
+    cursor:pointer;
+    user-select:none;
+    transition:.15s;
+    position:relative;
+    overflow:hidden;
+  }
+  .opt::after{
+    content:"";
+    position:absolute; inset:0;
+    background: radial-gradient(180px 90px at 30% 0%, rgba(239,255,0,.18), transparent 60%);
+    opacity:.65;
+    pointer-events:none;
+  }
+  .opt:hover{background: rgba(239,255,0,.12); transform: translateY(-1px);}
+  .opt.lock{pointer-events:none; opacity:.86}
+  .opt.correct{border-color: rgba(34,197,94,.75); background: rgba(34,197,94,.12);}
+  .opt.wrong{border-color: rgba(255,45,85,.82); background: rgba(255,45,85,.12);}
+
+  .msg{
+    min-height:38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:1250;
+    letter-spacing:.03em;
+    text-align:center;
+  }
+  .msg .ok{color: var(--ok); text-shadow:0 0 14px rgba(34,197,94,.18);}
+  .msg .bad{color: var(--bad); text-shadow:0 0 14px rgba(255,45,85,.18);}
+
+  .sticky{
+    position: sticky;
+    bottom: 0;
+    padding:10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.86) 30%, rgba(255,255,255,.95));
+    border-top: 1px solid rgba(0,0,0,.08);
+    border-radius: 14px;
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  /* Emoji pop */
+  .emojiPop{
+    position:fixed; left:50%; top:46%;
+    transform:translate(-50%,-50%);
+    z-index:999;
+    min-width:min(520px, 92vw);
+    padding:18px 18px 14px;
+    border-radius:22px;
+    border:1px solid rgba(0,0,0,.10);
+    background: rgba(255,255,255,.94);
+    box-shadow: 0 30px 120px rgba(0,0,0,.22);
+    display:none;
+    text-align:center;
+    backdrop-filter: blur(10px);
+    animation: pop .22s ease-out;
+  }
+  @keyframes pop{
+    from{transform:translate(-50%,-50%) scale(.92); opacity:0}
+    to{transform:translate(-50%,-50%) scale(1); opacity:1}
+  }
+  .emojiIcon{font-size: clamp(54px, 6vw, 92px); line-height:1;}
+  .emojiText{margin-top:10px; font-weight:1350; font-size: clamp(18px, 2.6vw, 26px);}
+
+  /* Report */
+  .report{display:grid; gap:10px; text-align:left;}
+  .reportHead{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:flex-end;}
+  .badge{
+    padding:8px 10px;
+    border-radius:14px;
+    border:1px solid rgba(0,0,0,.10);
+    background: rgba(255,255,255,.92);
+    font-weight:1300;
+    letter-spacing:.04em;
+  }
+  .scoreBig{
+    text-align:center;
+    font-size: clamp(44px, 7vw, 92px);
+    font-weight:1500;
+    letter-spacing:.06em;
+    text-shadow: 0 18px 60px rgba(0,0,0,.18);
+  }
+  .mini{font-weight:1150; opacity:.88; letter-spacing:.03em; text-align:center;}
+
+  table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    overflow:hidden;
+    border-radius:16px;
+    border:1px solid rgba(0,0,0,.10);
+    background: rgba(255,255,255,.92);
+  }
+  td{
+    padding:12px;
+    border-bottom:1px solid rgba(0,0,0,.06);
+    font-weight:1250;
+  }
+  tr:last-child td{border-bottom:none}
+  td.k{opacity:.78; width:46%}
+  td.v{text-align:right; font-weight:1500}
+
+  .foot{
+    padding:8px 12px 12px;
+    text-align:center;
+    font-weight:1050;
+    opacity:.70;
+    font-size:12px;
+  }
+
+  @media(max-width: 520px){
+    .subLine{display:none}
+    .titleLine{font-size:13px}
+    .logo{width:34px;height:34px}
+    .main{padding:8px 10px 14px}
+    .inner{max-height: calc(100svh - 74px);}
+  }
+  @media (max-height: 700px){
+    body{overflow:auto}
+    .wrap{min-height:100svh; height:auto}
+  }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div class="titleBlock">
+        <div class="titleLine"><b>ULTIMATE TENSE ASSAULT</b> • Set 3 (Hardcore)</div>
+        <div class="subLine">White–Yellow + red accents • Sound ON • EN only</div>
+      </div>
+    </div>
+
+    <div class="hud">
+      <div class="chip"><span class="dot"></span>Q <b id="hudQ">1</b>/30</div>
+      <div class="chip"><span class="dot red"></span>Score <b id="hudScore">0</b></div>
+      <div class="chip"><span class="dot"></span>Correct <b id="hudCorrect">0</b></div>
+      <div class="chip"><span class="dot red"></span>Wrong <b id="hudWrong">0</b></div>
+      <div class="chip"><span class="dot"></span>Best Streak <b id="hudBest">0</b></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="panel">
+      <div class="inner">
+
+        <div class="hero">
+          <div class="heroTitle">Hardcore Mixed Tenses</div>
+          <div class="heroSub">One correct answer only. Traps are <b>tiny</b>. Listen to the sounds. 😈🔊</div>
+        </div>
+
+        <!-- START -->
+        <section class="screen active" id="start">
+          <div class="grid2">
+            <div class="box">
+              <h3>How to play</h3>
+              <div class="how">
+                <div class="pill"><i>1</i><div>All tenses mixed. Watch auxiliaries: <b>do/does</b>, <b>is/are</b>, <b>has/have</b>, <b>will</b>. ⚡</div></div>
+                <div class="pill"><i>2</i><div>Traps include spelling + form: <b>studying/studing</b>, <b>has went</b>, <b>will goes</b>. 🎯</div></div>
+                <div class="pill"><i>3</i><div>Sound: click = tap, correct = win, wrong = fail. 🔊</div></div>
+                <div class="pill"><i>4</i><div>Answer → NEXT (no auto-skip). TV MODE available. 📺</div></div>
+              </div>
+            </div>
+
+            <div class="box">
+              <h3>Player</h3>
+              <div style="display:grid; gap:10px;">
+                <label>NAME</label>
+                <input id="name" maxlength="24" placeholder="Type your name..." />
+              </div>
+
+              <div class="row">
+                <button class="btn danger" id="btnStart">▶ START BATTLE</button>
+                <button class="btn secondary" id="btnTV">📺 TV MODE: OFF</button>
+              </div>
+
+              <div class="row">
+                <button class="btn secondary" id="btnSound">🔊 SOUND: ON</button>
+                <button class="btn secondary" id="btnFull">⛶ FULLSCREEN</button>
+                <button class="btn secondary" id="btnResetName">✎ CLEAR NAME</button>
+              </div>
+
+              <div style="margin-top:10px; font-weight:1100; opacity:.82; font-size:12px;">
+                Tip: If sound doesn’t play on mobile, tap once on the screen (Start button works) ✅
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- GAME -->
+        <section class="screen" id="game">
+          <div class="arena">
+            <div class="qBox">
+              <div class="qMeta">
+                <div class="qNo" id="qNo">QUESTION 1/30</div>
+                <div class="qType" id="qType">TYPE</div>
+              </div>
+              <div class="qText" id="qText">…</div>
+            </div>
+
+            <div class="optGrid" id="optGrid"></div>
+
+            <div class="msg" id="msg"></div>
+
+            <div class="sticky">
+              <button class="btn secondary" id="btnHome">⌂ HOME</button>
+              <button class="btn secondary" id="btnTV2">📺 TV MODE</button>
+              <button class="btn secondary" id="btnSound2">🔊 SOUND</button>
+              <button class="btn danger" id="btnNext" disabled style="opacity:.65;">NEXT ▶</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- RESULT -->
+        <section class="screen" id="result">
+          <div class="box">
+            <h3>Assessment Report</h3>
+
+            <div class="report">
+              <div class="reportHead">
+                <div class="badge">Player: <b id="rName">—</b></div>
+                <div class="badge">Date: <b id="rDate">—</b></div>
+              </div>
+
+              <div class="scoreBig" id="rScoreBig">0 / 30</div>
+              <div class="mini" id="rComment">—</div>
+
+              <table>
+                <tr><td class="k">Total Questions</td><td class="v" id="rTotal">30</td></tr>
+                <tr><td class="k">Correct</td><td class="v" id="rCorrect">0</td></tr>
+                <tr><td class="k">Wrong</td><td class="v" id="rWrong">0</td></tr>
+                <tr><td class="k">Accuracy</td><td class="v" id="rAcc">0%</td></tr>
+                <tr><td class="k">Best Streak</td><td class="v" id="rBest">0</td></tr>
+                <tr><td class="k">Level</td><td class="v" id="rLevel">—</td></tr>
+              </table>
+
+              <div class="row" style="justify-content:center;">
+                <button class="btn danger" id="btnAgain">↻ PLAY AGAIN</button>
+                <button class="btn secondary" id="btnBack">⌂ HOME</button>
+                <button class="btn secondary" id="btnFull2">⛶ FULLSCREEN</button>
+              </div>
+
+              <div style="margin-top:6px; text-align:center; font-weight:1100; opacity:.78;">
+                Hardcore note: Traps are micro-changes. Train your eyes. 😈👀
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">Set 3 Hardcore • White–Yellow + red accents • Sound • EN Only</div>
+</div>
+
+<!-- Emoji pop center -->
+<div class="emojiPop" id="emojiPop" role="status" aria-live="polite">
+  <div class="emojiIcon" id="emojiIcon">😎🔥</div>
+  <div class="emojiText" id="emojiText">Awesome!</div>
+</div>
+
+<script>
+/* ---------------- HARDCORE QUESTION BANK (30) ----------------
+   Rules:
+   - Only ONE correct answer per question.
+   - Traps: spelling, wrong auxiliary, wrong tense, wrong verb form after will/has/have, etc.
+*/
+const Q = [
+  // PRESENT SIMPLE (agreement + tricky)
+  {type:"PRESENT SIMPLE", text:"Every morning, she ___ to the bus stop.", correct:"hurries",
+    options:["hurries","hurry","hurried","hurrying"]},
+  {type:"PRESENT SIMPLE", text:"My teacher ___ English very clearly.", correct:"explains",
+    options:["explains","explain","explained","explaining"]},
+  {type:"PRESENT SIMPLE", text:"The baby often ___ at night.", correct:"cries",
+    options:["cries","crys","cry","crying"]},
+
+  // PRESENT CONTINUOUS (be + -ing + spelling traps)
+  {type:"PRESENT CONTINUOUS", text:"Right now, he ___ a message.", correct:"is typing",
+    options:["is typing","are typing","is typeing","is typed"]},
+  {type:"PRESENT CONTINUOUS", text:"Look! They ___ in the pool.", correct:"are swimming",
+    options:["are swimming","is swimming","are swiming","are swam"]},
+  {type:"PRESENT CONTINUOUS", text:"At the moment, I ___ for my keys.", correct:"am looking",
+    options:["am looking","is looking","am look","am loking"]},
+
+  // PAST SIMPLE (irregular + trap forms)
+  {type:"PAST SIMPLE", text:"Yesterday, we ___ a new restaurant.", correct:"found",
+    options:["found","find","founded","finding"]},
+  {type:"PAST SIMPLE", text:"Last weekend, he ___ his grandparents.", correct:"visited",
+    options:["visited","visit","visits","visiting"]},
+  {type:"PAST SIMPLE", text:"Two days ago, she ___ a beautiful photo.", correct:"took",
+    options:["took","take","taked","taking"]},
+
+  // PRESENT PERFECT (has/have + V3 traps)
+  {type:"PRESENT PERFECT", text:"She has ___ her homework already.", correct:"done",
+    options:["done","did","do","doing"]},
+  {type:"PRESENT PERFECT", text:"They have ___ to this museum before.", correct:"been",
+    options:["been","was","went","being"]},
+  {type:"PRESENT PERFECT", text:"I have ___ my wallet.", correct:"lost",
+    options:["lost","lose","losed","losing"]},
+  {type:"PRESENT PERFECT", text:"He has not ___ the email yet.", correct:"sent",
+    options:["sent","send","sended","sending"]},
+
+  // FUTURE (will + V1 traps)
+  {type:"FUTURE (WILL)", text:"I ___ you as soon as I arrive.", correct:"will text",
+    options:["will text","will texts","will texted","will texting"]},
+  {type:"FUTURE (WILL)", text:"She will ___ the door later.", correct:"close",
+    options:["close","closes","closed","closing"]},
+  {type:"FUTURE (WILL)", text:"They won't ___ late tonight.", correct:"come",
+    options:["come","comes","came","coming"]},
+  {type:"FUTURE (WILL)", text:"Will he ___ us tomorrow?", correct:"help",
+    options:["help","helps","helped","helping"]},
+
+  // GOING TO (planned/evidence)
+  {type:"FUTURE (GOING TO)", text:"Look at those clouds! It ___ rain.", correct:"is going to",
+    options:["is going to","are going to","am going to","will"]},
+  {type:"FUTURE (GOING TO)", text:"We ___ buy tickets this afternoon.", correct:"are going to",
+    options:["are going to","is going to","am going to","will"]},
+
+  // MIXED: time signals force the tense
+  {type:"MIXED", text:"Now, she ___ a shower.", correct:"is taking",
+    options:["is taking","takes","took","has took"]},
+  {type:"MIXED", text:"Since 2019, I ___ here.", correct:"have lived",
+    options:["have lived","lived","live","am living"]},
+  {type:"MIXED", text:"Yesterday at 8 p.m., they ___ dinner. (action in progress)", correct:"were eating",
+    options:["were eating","ate","are eating","have eaten"]},
+
+  // PRESENT PERFECT QUESTION (aux trap)
+  {type:"PRESENT PERFECT", text:"___ you ever tried ramen?", correct:"Have",
+    options:["Have","Has","Did","Do"]},
+  {type:"PRESENT PERFECT", text:"___ she finished the project yet?", correct:"Has",
+    options:["Has","Have","Did","Does"]},
+
+  // PRESENT SIMPLE vs CONTINUOUS (meaning)
+  {type:"MIXED", text:"She usually ___ tea, but today she ___ coffee.", correct:"drinks / is drinking",
+    options:["drinks / is drinking","drink / drinking","drinks / drinks","is drinking / drinks"]},
+
+  // PAST SIMPLE vs PRESENT PERFECT
+  {type:"MIXED", text:"I ___ that movie last night.", correct:"watched",
+    options:["watched","have watched","watch","have watch"]},
+  {type:"MIXED", text:"I ___ that movie already. (no time given)", correct:"have watched",
+    options:["have watched","watched","watch","have watch"]},
+
+  // FUTURE with time clause (will + V1)
+  {type:"FUTURE (WILL)", text:"When she ___ home, she will call you.", correct:"gets",
+    options:["gets","get","got","is getting"]},
+
+  // EXTRA HARD: tiny spelling traps
+  {type:"PRESENT CONTINUOUS", text:"We ___ for the test right now.", correct:"are studying",
+    options:["are studying","are studing","is studying","are studied"]},
+  {type:"PRESENT CONTINUOUS", text:"He ___ the boxes at the moment.", correct:"is carrying",
+    options:["is carrying","is carring","are carrying","carried"]},
+
+  // Perfect with irregular V3 traps
+  {type:"PRESENT PERFECT", text:"She has ___ a lot today.", correct:"written",
+    options:["written","wrote","write","writing"]},
+  {type:"PRESENT PERFECT", text:"They have ___ the door.", correct:"shut",
+    options:["shut","shutted","shutten","shuts"]},
+
+  // Future vs Going to nuance (planned)
+  {type:"FUTURE (GOING TO)", text:"I bought ingredients. I ___ cook tonight.", correct:"am going to",
+    options:["am going to","will","are going to","is going to"]},
+
+  // Final boss: will + verb only
+  {type:"FUTURE (WILL)", text:"Tomorrow, we will ___ the results.", correct:"announce",
+    options:["announce","announces","announced","announcing"]}
+];
+
+/* ---------------- State ---------------- */
+let order = [];
+let idx = 0;
+
+let score = 0;
+let correctCount = 0;
+let wrongCount = 0;
+
+let streak = 0;
+let bestStreak = 0;
+
+let playerName = "";
+
+/* ---------------- Audio (Web Audio API) ---------------- */
+let soundOn = true;
+let audioCtx = null;
+
+function ensureAudio(){
+  if(!soundOn) return;
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if(audioCtx.state === "suspended"){
+    audioCtx.resume().catch(()=>{});
+  }
+}
+
+function beep({freq=440, dur=0.06, type="sine", gain=0.05} = {}){
+  if(!soundOn) return;
+  ensureAudio();
+  if(!audioCtx) return;
+
+  const t0 = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+  osc.connect(g);
+  g.connect(audioCtx.destination);
+
+  osc.start(t0);
+  osc.stop(t0 + dur + 0.02);
+}
+
+function clickSound(){
+  beep({freq:620, dur:0.04, type:"square", gain:0.035});
+}
+function correctSound(){
+  // quick "win" tri-beep
+  beep({freq:660, dur:0.06, type:"sine", gain:0.05});
+  setTimeout(()=>beep({freq:880, dur:0.07, type:"sine", gain:0.06}), 70);
+  setTimeout(()=>beep({freq:1100, dur:0.08, type:"sine", gain:0.065}), 150);
+}
+function wrongSound(){
+  // short "fail" drop
+  beep({freq:260, dur:0.10, type:"sawtooth", gain:0.06});
+  setTimeout(()=>beep({freq:180, dur:0.12, type:"sawtooth", gain:0.06}), 120);
+}
+
+/* ---------------- Helpers ---------------- */
+const $ = (id)=>document.getElementById(id);
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+let emojiTimer=null;
+function showEmoji(ok){
+  const pop=$("emojiPop");
+  $("emojiIcon").textContent = ok ? "😎🔥" : "💀";
+  $("emojiText").textContent = ok ? "Awesome!" : "Nope!";
+  pop.style.display="block";
+  if(emojiTimer) clearTimeout(emojiTimer);
+  emojiTimer=setTimeout(()=>{pop.style.display="none";}, 650);
+}
+
+function setScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+
+function updateHUD(){
+  $("hudQ").textContent = Math.min(idx+1, 30);
+  $("hudScore").textContent = score;
+  $("hudCorrect").textContent = correctCount;
+  $("hudWrong").textContent = wrongCount;
+  $("hudBest").textContent = bestStreak;
+}
+
+function lockOptions(){
+  document.querySelectorAll(".opt").forEach(o=>o.classList.add("lock"));
+}
+function enableNext(label){
+  $("btnNext").disabled=false;
+  $("btnNext").style.opacity=1;
+  $("btnNext").textContent = label;
+}
+function disableNext(){
+  $("btnNext").disabled=true;
+  $("btnNext").style.opacity=.65;
+  $("btnNext").textContent = "NEXT ▶";
+}
+
+/* ---------------- Game Flow ---------------- */
+function loadQ(){
+  disableNext();
+  $("msg").innerHTML = "";
+  updateHUD();
+
+  const q = Q[order[idx]];
+  $("qNo").textContent = `QUESTION ${idx+1}/30`;
+  $("qType").textContent = q.type;
+  $("qText").textContent = q.text;
+
+  const grid=$("optGrid");
+  grid.innerHTML="";
+  const opts = shuffle([...q.options]);
+  opts.forEach(opt=>{
+    const d=document.createElement("div");
+    d.className="opt";
+    d.textContent=opt;
+    d.onclick=()=>choose(opt, d, q.correct);
+    grid.appendChild(d);
+  });
+}
+
+function choose(selected, el, correct){
+  if(el.classList.contains("lock")) return;
+  clickSound();
+  lockOptions();
+
+  const ok = (selected === correct);
+
+  if(ok){
+    el.classList.add("correct");
+    score += 1;
+    correctCount += 1;
+
+    streak += 1;
+    if(streak > bestStreak) bestStreak = streak;
+
+    $("msg").innerHTML = `<span class="ok">✅ CORRECT (+1) • Streak: ${streak}</span>`;
+    correctSound();
+    showEmoji(true);
+  }else{
+    el.classList.add("wrong");
+    wrongCount += 1;
+    streak = 0;
+
+    document.querySelectorAll(".opt").forEach(o=>{
+      if(o.textContent === correct) o.classList.add("correct");
+    });
+
+    $("msg").innerHTML = `<span class="bad">✖ WRONG • Correct: <b>${correct}</b></span>`;
+    wrongSound();
+    showEmoji(false);
+  }
+
+  updateHUD();
+  enableNext(idx>=29 ? "FINISH ▶" : "NEXT ▶");
+}
+
+function startGame(){
+  clickSound();
+  ensureAudio();
+
+  playerName = ($("name").value || "").trim();
+  if(!playerName) playerName = "Guest";
+
+  // ensure 30 questions
+  order = shuffle([...Array(30).keys()]);
+  idx = 0;
+
+  score = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  streak = 0;
+  bestStreak = 0;
+
+  updateHUD();
+  setScreen("game");
+  loadQ();
+}
+
+function next(){
+  clickSound();
+  if(idx>=29){
+    showResult();
+    return;
+  }
+  idx += 1;
+  loadQ();
+}
+
+function showResult(){
+  setScreen("result");
+
+  const total = 30;
+  const acc = Math.round((correctCount/total)*100);
+  const now = new Date();
+
+  $("rName").textContent = playerName;
+  $("rDate").textContent = now.toLocaleString();
+
+  $("rScoreBig").textContent = `${correctCount} / ${total}`;
+  $("rTotal").textContent = total;
+  $("rCorrect").textContent = correctCount;
+  $("rWrong").textContent = wrongCount;
+  $("rAcc").textContent = `${acc}%`;
+  $("rBest").textContent = bestStreak;
+
+  let level = "Needs Practice";
+  let comment = "Focus: auxiliaries and verb forms under pressure.";
+  if(acc >= 93){ level="Legend"; comment="Hardcore master. You see micro-traps instantly.";}
+  else if(acc >= 85){ level="Elite"; comment="Excellent control. A few traps still bite.";}
+  else if(acc >= 70){ level="Strong"; comment="Good! Keep drilling the smallest differences.";}
+  $("rLevel").textContent = level;
+  $("rComment").textContent = `${comment} • Accuracy: ${acc}% • Best streak: ${bestStreak}`;
+}
+
+/* ---------------- TV Mode + Fullscreen + Sound toggle ---------------- */
+function toggleTV(){
+  clickSound();
+  document.body.classList.toggle("tv-mode");
+  const on = document.body.classList.contains("tv-mode");
+  $("btnTV").textContent = on ? "📺 TV MODE: ON" : "📺 TV MODE: OFF";
+}
+function toggleTVQuick(){
+  clickSound();
+  document.body.classList.toggle("tv-mode");
+}
+
+function toggleFull(){
+  clickSound();
+  const el=document.documentElement;
+  if(!document.fullscreenElement){
+    (el.requestFullscreen?.() || el.webkitRequestFullscreen?.() || el.msRequestFullscreen?.()).catch(()=>{});
+  }else{
+    (document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.()).catch(()=>{});
+  }
+}
+
+function setSoundLabel(){
+  const label = soundOn ? "🔊 SOUND: ON" : "🔇 SOUND: OFF";
+  $("btnSound").textContent = label;
+  $("btnSound2").textContent = soundOn ? "🔊 SOUND" : "🔇 SOUND";
+}
+
+function toggleSound(){
+  // allow toggling without click sound if turning off
+  if(soundOn) clickSound();
+  soundOn = !soundOn;
+  if(soundOn) ensureAudio();
+  setSoundLabel();
+}
+
+/* ---------------- Events ---------------- */
+$("btnStart").addEventListener("click", startGame);
+$("btnNext").addEventListener("click", next);
+$("btnHome").addEventListener("click", ()=>{clickSound(); setScreen("start");});
+$("btnBack").addEventListener("click", ()=>{clickSound(); setScreen("start");});
+$("btnAgain").addEventListener("click", startGame);
+
+$("btnTV").addEventListener("click", toggleTV);
+$("btnTV2").addEventListener("click", toggleTVQuick);
+
+$("btnFull").addEventListener("click", toggleFull);
+$("btnFull2").addEventListener("click", toggleFull);
+
+$("btnResetName").addEventListener("click", ()=>{clickSound(); $("name").value=""; $("name").focus();});
+
+$("btnSound").addEventListener("click", toggleSound);
+$("btnSound2").addEventListener("click", toggleSound);
+
+// Initialize label
+setSoundLabel();
+</script>
+</body>
+</html>
